@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_HOST")
+}
+
+model users {
+  id        Int        @id @default(autoincrement())
+  full_name      String     @db.VarChar(250)
+  email     String     @unique(map: "email_UNIQUE") @db.VarChar(200)
+  password  String     @db.VarChar(256)
+  products  products[] @relation("UserProducts") // One-to-many relation with products
+}
+
+model products {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(200)
+  description String @db.VarChar(800)
+  price       Int
+  banner      String @db.VarChar(300)
+  user_id     Int
+  user        users  @relation("UserProducts", fields: [user_id], references: [id]) // Relation to users table
+}
