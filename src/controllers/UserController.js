@@ -59,6 +59,21 @@ class UserController {
             next(err);
         }
     }
+
+    async list(req, res, next) {
+        try {
+            const users = await prisma.users.findMany({
+                select: {
+                    id: true,
+                    full_name: true,
+                    email: true
+                }
+            });
+            res.status(200).json(users);
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 export default new UserController();
