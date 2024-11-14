@@ -5,17 +5,14 @@ const prisma = new PrismaClient();
 class UserController {
   async create(req, res, next) {
     try {
-      // Filtrando apenas os campos desejados
       const { full_name, email, password } = req.body;
 
-      // Validação opcional: verificar se todos os campos necessários estão presentes
       if (!full_name || !email || !password) {
         return res
           .status(400)
           .json({ message: "Todos os campos são obrigatórios" });
       }
 
-      // Criando o usuário com os campos filtrados
       const createdUser = await prisma.users.create({
         data: { full_name, email, password },
         select: {
