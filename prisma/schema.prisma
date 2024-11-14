@@ -9,10 +9,10 @@ datasource db {
 
 model users {
   id        Int        @id @default(autoincrement())
-  full_name      String     @db.VarChar(250)
+  full_name String     @db.VarChar(250)
   email     String     @unique(map: "email_UNIQUE") @db.VarChar(200)
   password  String     @db.VarChar(256)
-  products  products[] @relation("UserProducts") // One-to-many relation with products
+  products  products[] @relation("UserProducts")
 }
 
 model products {
@@ -22,5 +22,5 @@ model products {
   price       Int
   banner      String @db.VarChar(300)
   user_id     Int
-  user        users  @relation("UserProducts", fields: [user_id], references: [id]) // Relation to users table
+  user        users  @relation("UserProducts", fields: [user_id], references: [id])
 }
