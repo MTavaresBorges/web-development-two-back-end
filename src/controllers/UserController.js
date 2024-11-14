@@ -29,12 +29,19 @@ class UserController {
 
   async update(req, res, next) {
     try {
+      const { full_name, email, password } = req.body;
+
+      if (!full_name || !email || !password) {
+        return res
+          .status(400)
+          .json({ message: "Todos os campos são obrigatórios" });
+      }
+
       const { id } = req.params;
-      const updatedData = req.body;
 
       const updatedUser = await prisma.users.update({
         where: { id: parseInt(id) },
-        data: updatedData,
+        data: { full_name, email, password },
         select: {
           id: true,
           full_name: true,
@@ -43,25 +50,6 @@ class UserController {
       });
 
       res.status(200).json(updatedUser);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  async delete(req, res, next) {
-    try {
-      const { id } = req.params;
-
-      const deletedUser = await prisma.users.delete({
-        where: { id: parseInt(id) },
-        select: {
-          id: true,
-          full_name: true,
-          email: true,
-        },
-      });
-
-      res.status(200).json(deletedUser);
     } catch (err) {
       next(err);
     }
