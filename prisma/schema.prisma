@@ -12,6 +12,7 @@ model users {
   full_name String     @db.VarChar(250)
   email     String     @unique(map: "email_UNIQUE") @db.VarChar(200)
   password  String     @db.VarChar(256)
+
   products  products[] @relation("UserProducts")
 }
 
@@ -22,5 +23,6 @@ model products {
   price       Int
   banner      String @db.VarChar(300)
   user_id     Int
+  
   user        users  @relation("UserProducts", fields: [user_id], references: [id])
 }
