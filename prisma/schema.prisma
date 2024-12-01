@@ -9,9 +9,11 @@ datasource db {
 
 model users {
   id        Int        @id @default(autoincrement())
-  full_name String     @db.VarChar(250)
+  fullName String     @db.VarChar(250)
   email     String     @unique(map: "email_UNIQUE") @db.VarChar(200)
   password  String     @db.VarChar(256)
+  createdAt DateTime @default(now()) 
+  updatedAt DateTime @updatedAt
 
   products  products[]
 }
@@ -22,7 +24,9 @@ model products {
   description String? @db.VarChar(800)
   price       Int
   banner      String? @db.VarChar(300)
-  user_id     Int
+  userId     Int
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
 
-  user        users    @relation(fields: [user_id], references: [id])
+  user        users    @relation(fields: [userId], references: [id])
 }

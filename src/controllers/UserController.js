@@ -9,7 +9,7 @@ export default class UserController {
 
   static async store(req, res) {
     const schema = Yup.object().shape({
-      full_name: Yup.string().required(),
+      fullName: Yup.string().required(),
       email: Yup.string().email().required(),
       password: Yup.string().required(),
     });
@@ -49,7 +49,7 @@ export default class UserController {
 
   static async update(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
+      fullName: Yup.string().required(),
       email: Yup.string().email().required(),
     });
 
