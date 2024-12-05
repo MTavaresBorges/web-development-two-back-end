@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
 export default class AuthService {
-  async authenticate(data) {
+  static async authenticate(data) {
     try {
       const { email, password } = data;
 
@@ -21,9 +23,11 @@ export default class AuthService {
         throw new Error('Invalid password.');
       }
 
-      return jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
         expiresIn: '1d',
       });
+
+      return { user, token };
     } catch (error) {
       throw new Error('Could not authenticate user.');
     }

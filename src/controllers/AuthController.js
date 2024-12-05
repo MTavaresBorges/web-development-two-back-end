@@ -1,3 +1,6 @@
+import * as Yup from 'yup';
+import AuthService from '../services/AuthService.js';
+
 export default class AuthController {
   static async authenticate(req, res) {
     const schema = Yup.object().shape({
@@ -9,10 +12,8 @@ export default class AuthController {
       const data = req.body;
 
       await schema.validate(data, { abortEarly: false });
-
-      const token = await AuthService.authenticate(data);
-
-      res.status(201).json({ token });
+      
+      res.status(201).json({ ...await AuthService.authenticate(data) });
     } catch (err) {
       if(err instanceof Yup.ValidationError) {
         return res.status(422).json({ errors: err.errors });
