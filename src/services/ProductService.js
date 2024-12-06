@@ -4,9 +4,10 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 export default class UserService {
-  static async all() {
+  static async all(userId = null) { 
     try {
-      return await prisma.products.findMany();
+      const filter = userId ? { where: { userId } } : {};
+      return await prisma.products.findMany(filter);
     } catch (error) {
       throw new Error('Could not fetch products.');
     }
@@ -22,10 +23,13 @@ export default class UserService {
     }
   }
 
-  static async create(data) {
+  static async create(userId, data) {
     try {
       return await prisma.products.create({
-        data
+        data: {
+          ...data,
+          user: { connect: { id: userId } },
+        }
       });
     } catch (error) {
       throw new Error('Could not create product.');

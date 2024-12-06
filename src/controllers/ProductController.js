@@ -3,8 +3,8 @@ import ProductService from '../services/ProductService.js';
 
 export default class ProductController {
   static async index(req, res) {
-    const users = await UserService.all();
-    res.json({ users });
+    const products = await ProductService.all(req.userId);
+    res.json({ products });
   }
 
   static async store(req, res) {
@@ -19,7 +19,7 @@ export default class ProductController {
 
       await schema.validate(data, { abortEarly: false });
 
-      const product = await ProductService.create(data);
+      const product = await ProductService.create(req.userId, data);
 
       res.status(201).json(product);
     } catch (err) {
@@ -87,7 +87,7 @@ export default class ProductController {
         return res.status(404).json({ message: 'Product not found.' });
       }
 
-      res.json(product);
+      res.status(204).end();
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
