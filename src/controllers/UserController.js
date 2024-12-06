@@ -1,74 +1,94 @@
-import { PrismaClient } from "@prisma/client";
+import * as Yup from 'yup';
+import UserService from '../services/UserService.js';
 
-const prisma = new PrismaClient();
+export default class UserController {
+  static async index(req, res) {
+    const users = await UserService.all();
+    res.json({ users });
+  }
 
-class UserController {
-  async create(req, res, next) {
+  static async store(req, res) {
+    const schema = Yup.object().shape({
+      fullName: Yup.string().required(),
+      email: Yup.string().email().required(),
+      password: Yup.string().required(),
+    });
+
     try {
-      const { full_name, email, password } = req.body;
+      const data = req.body;
 
-      if (!full_name || !email || !password) {
-        return res
-          .status(400)
-          .json({ message: "Todos os campos são obrigatórios" });
+      await schema.validate(data, { abortEarly: false });
+
+      const user = await UserService.create(data);
+
+      res.status(201).json(user);
+    } catch (err) {
+      if(err instanceof Yup.ValidationError) {
+        return res.status(422).json({ errors: err.errors });
       }
 
-      const createdUser = await prisma.users.create({
-        data: { full_name, email, password },
-        select: {
-          full_name: true,
-          email: true,
-        },
-      });
-
-      res.status(201).json(createdUser);
-    } catch (err) {
-      next(err);
+      res.status(500).json({ message: err.message });
     }
   }
 
-  async update(req, res, next) {
+  static async show(req, res) {
     try {
-      const { full_name, email, password } = req.body;
+      const { id } = req.params;
 
-      if (!full_name || !email || !password) {
-        return res
-          .status(400)
-          .json({ message: "Todos os campos são obrigatórios" });
+      const user = await UserService.findById(parseInt(id));
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
       }
+
+      res.json(user);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async update(req, res) {
+    const schema = Yup.object().shape({
+      fullName: Yup.string().required(),
+      email: Yup.string().email().required(),
+    });
+
+    try {
+      const data = req.body;
+
+      await schema.validate(data, { abortEarly: false });
 
       const { id } = req.params;
 
-      const updatedUser = await prisma.users.update({
-        where: { id: parseInt(id) },
-        data: { full_name, email, password },
-        select: {
-          id: true,
-          full_name: true,
-          email: true,
-        },
-      });
+      const user = await UserService.update(parseInt(id), data);
 
-      res.status(200).json(updatedUser);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+
+      res.json(user);
     } catch (err) {
-      next(err);
+      if(err instanceof Yup.ValidationError) {
+        return res.status(422).json({ errors: err.errors });
+      }
+
+      res.status(500).json({ message: err.message });
     }
   }
 
-  async list(req, res, next) {
+  static async destroy(req, res) {
     try {
-      const users = await prisma.users.findMany({
-        select: {
-          id: true,
-          full_name: true,
-          email: true,
-        },
-      });
-      res.status(200).json(users);
+      const { id } = req.params;
+
+      const user = await UserService.delete(parseInt(id));
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+
+      res.status(204).end();
     } catch (err) {
-      next(err);
+      res.status(500).json({ message: err.message });
     }
   }
 }
-
-export default new UserController();
