@@ -23,36 +23,24 @@ export default class UserService {
   }
 
   static async create(data) {
-    try {
-      const { password } = data;
-      data.password = await bcrypt.hash(password, 10);
+    const { password } = data;
+    data.password = await bcrypt.hash(password, 10);
 
-      return await prisma.users.create({
-        data,
-      });
-    } catch (error) {
-      throw new Error('Could not create user.');
-    }
+    return await prisma.users.create({
+      data,
+    });
   }
 
   static async update(id, data) {
-    try {
-      return await prisma.users.update({
-        where: { id },
-        data,
-      });
-    } catch (error) {
-      throw new Error('Could not update user.');
-    }
+    return await prisma.users.update({
+      where: { id },
+      data,
+    });
   }
 
   static async delete(id) {
-    try {
-      return await prisma.users.delete({
-        where: { id },
-      });
-    } catch (error) {
-      throw new Error('Could not delete user.');
-    }
+    return await prisma.users.delete({
+      where: { id },
+    });
   }
 }
