@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors'
+import path from 'path';
 
 import userRouter from './routers/userRouter.js';
 import productRouter from './routers/productRouter.js';
@@ -13,6 +14,8 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
+
+app.use('/uploads', express.static(path.resolve('uploads')));
 
 app.get('/', TestConnectionController.handle);
 app.post('/authenticate', AuthController.authenticate);

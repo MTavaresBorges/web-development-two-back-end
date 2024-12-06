@@ -106,7 +106,7 @@ export default class ProductController {
     const product = await prisma.products.update({
       where: { id: parseInt(id) },
       data: {
-        banner: req.file.filename,
+        banner: req.file.path,
       },
     });
   
