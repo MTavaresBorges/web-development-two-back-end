@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { PrismaClient } from '@prisma/client';
 import ProductService from '../services/ProductService.js';
 
 export default class ProductController {
@@ -91,5 +92,28 @@ export default class ProductController {
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
+  }
+
+  static async uploadBanner(req, res) {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
+  
+    const { id } = req.params;
+  
+    const prisma = new PrismaClient();
+  
+    const product = await prisma.products.update({
+      where: { id: parseInt(id) },
+      data: {
+        banner: req.file.filename,
+      },
+    });
+  
+    res.status(200).json({
+      message: 'File uploaded successfully.',
+      product,
+      file: req.file,
+    });
   }
 }

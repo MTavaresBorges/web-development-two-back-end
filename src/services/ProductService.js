@@ -1,9 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-export default class UserService {
+export default class ProductService {
   static async all(userId = null) { 
     try {
       const filter = userId ? { where: { userId } } : {};
